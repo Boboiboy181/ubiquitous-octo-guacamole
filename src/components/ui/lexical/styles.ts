@@ -10,7 +10,7 @@ export const styles = stylex.create({
         position: 'relative',
     },
     editorContent: {
-        minHeight: '100px',
+        minHeight: '200px',
         borderRadius: '0 0 12px 12px',
         backgroundColor: '#ffffff',
         borderStyle: 'solid',
@@ -78,7 +78,8 @@ export const styles = stylex.create({
         height: '18px',
     },
     paragraph: {
-        margin: '0 0 10px 0',
+        margin: '0',
+        position: 'relative',
     },
     textBold: {
         fontWeight: 'bold',
@@ -91,7 +92,7 @@ export const styles = stylex.create({
     },
     h1: {
         margin: 0,
-        fontSize: '2rem',        // 32px
+        fontSize: '2rem', // 32px
         fontWeight: 700,
         lineHeight: 1.2,
         letterSpacing: '-0.02em',
@@ -99,7 +100,7 @@ export const styles = stylex.create({
     },
     h2: {
         margin: 0,
-        fontSize: '1.75rem',     // 28px
+        fontSize: '1.75rem', // 28px
         fontWeight: 600,
         lineHeight: 1.25,
         letterSpacing: '-0.015em',
@@ -107,7 +108,7 @@ export const styles = stylex.create({
     },
     h3: {
         margin: 0,
-        fontSize: '1.5rem',      // 24px
+        fontSize: '1.5rem', // 24px
         fontWeight: 600,
         lineHeight: 1.3,
         letterSpacing: '-0.01em',
@@ -115,7 +116,7 @@ export const styles = stylex.create({
     },
     h4: {
         margin: 0,
-        fontSize: '1.25rem',     // 20px
+        fontSize: '1.25rem', // 20px
         fontWeight: 600,
         lineHeight: 1.35,
         letterSpacing: 0,
@@ -123,7 +124,7 @@ export const styles = stylex.create({
     },
     h5: {
         margin: 0,
-        fontSize: '1.125rem',    // 18px
+        fontSize: '1.125rem', // 18px
         fontWeight: 600,
         lineHeight: 1.4,
         letterSpacing: 0,
@@ -131,7 +132,7 @@ export const styles = stylex.create({
     },
     h6: {
         margin: 0,
-        fontSize: '1rem',        // 16px
+        fontSize: '1rem', // 16px
         fontWeight: 600,
         lineHeight: 1.45,
         letterSpacing: 0,
@@ -197,8 +198,8 @@ export const styles = stylex.create({
         paddingRight: '1.5em',
         listStyleType: 'none',
         outline: 'none',
+        minHeight: '24px',
         display: 'block',
-        minHeight: '1.5em',
         '::before': {
             content: '"\\200B"',
             width: '0.9em',
@@ -217,17 +218,15 @@ export const styles = stylex.create({
         },
     },
 
-    // Unchecked checklist item
     listItemUnchecked: {
         '::before': {
             borderWidth: '1px',
             borderRadius: '2px',
             borderStyle: 'solid',
-            borderColor: '#999'
+            borderColor: '#999',
         },
     },
 
-    // Checked checklist item
     listItemChecked: {
         textDecoration: 'line-through',
         '::before': {
@@ -236,7 +235,7 @@ export const styles = stylex.create({
             backgroundRepeat: 'no-repeat',
             borderWidth: '1px',
             borderStyle: 'solid',
-            borderColor: 'rgb(61, 135, 245)'
+            borderColor: 'rgb(61, 135, 245)',
         },
         '::after': {
             content: '""',
@@ -254,7 +253,6 @@ export const styles = stylex.create({
         },
     },
 
-    // Nested list item (no marker)
     nestedListItem: {
         listStyleType: 'none',
         '::before': {
@@ -275,6 +273,37 @@ export const styles = stylex.create({
         borderLeftWidth: '4px',
         borderLeftStyle: 'solid',
         paddingLeft: '16px',
+    },
+    strikethrough: {
+        textDecoration: 'line-through',
+    },
+    uppercase: {
+        textTransform: 'uppercase',
+    },
+    lowercase: {
+        textTransform: 'lowercase',
+    },
+    subscript: {
+        verticalAlign: 'sub',
+        fontSize: 'smaller',
+    },
+    superscript: {
+        verticalAlign: 'super',
+        fontSize: 'smaller',
+    },
+    capitalize: {
+        textTransform: 'capitalize',
+    },
+    underlineStrikethrough: {
+        textDecoration: 'line-through',
+        textDecorationThickness: '2px',
+        textUnderlineOffset: '2px',
+    },
+    code: {
+        fontFamily: 'var(--code-font-family)',
+        fontSize: 'var(--code-font-size)',
+        backgroundColor: 'var(--code-background-color)',
+        padding: '3px 5px',
+        borderRadius: '4px',
     }
-
 });

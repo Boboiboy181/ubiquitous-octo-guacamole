@@ -2,10 +2,10 @@ import * as stylex from '@stylexjs/stylex';
 import { IconChevronDown } from '@tabler/icons-react';
 import { isDOMNode } from 'lexical';
 import {
-    createContext,
     type KeyboardEvent,
     type ReactNode,
     type RefObject,
+    createContext,
     useCallback,
     useContext,
     useEffect,
@@ -226,6 +226,7 @@ function DropdownList({
 }) {
     const [items, setItems] = useState<RefObject<HTMLButtonElement | null>[]>([]);
     const [highlightedItem, setHighlightedItem] = useState<RefObject<HTMLButtonElement | null>>();
+    console.log("🚀 ~ DropdownList ~ highlightedItem:", highlightedItem)
 
     const registerItem = useCallback((ref: RefObject<HTMLButtonElement | null>) => {
         setItems((prev) => (prev ? [...prev, ref] : [ref]));

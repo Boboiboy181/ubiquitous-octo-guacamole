@@ -2,7 +2,6 @@ import * as stylex from '@stylexjs/stylex';
 
 import { copyToClipboard } from '@lexical/clipboard';
 import {
-    $insertList,
     $isListNode,
     INSERT_CHECK_LIST_COMMAND,
     INSERT_ORDERED_LIST_COMMAND,
@@ -10,10 +9,14 @@ import {
 } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $createHeadingNode, $createQuoteNode, $isHeadingNode, type HeadingTagType } from '@lexical/rich-text';
-import { $setBlocksType } from '@lexical/selection';
+import { $isAtNodeEnd, $setBlocksType } from '@lexical/selection';
 import { $findMatchingParent, mergeRegister } from '@lexical/utils';
 import {
     IconAbc,
+    IconAlignCenter,
+    IconAlignJustified,
+    IconAlignLeft,
+    IconAlignRight,
     IconArrowBackUp,
     IconArrowForwardUp,
     IconBold,
@@ -40,19 +43,26 @@ import {
     IconTrash,
     IconUnderline,
 } from '@tabler/icons-react';
+import { produce } from 'immer';
 import {
     $createParagraphNode,
     $getSelection,
+    $isElementNode,
     $isRangeSelection,
     $isRootOrShadowRoot,
+    $isTextNode,
     CAN_REDO_COMMAND,
     CAN_UNDO_COMMAND,
     COMMAND_PRIORITY_LOW,
     COPY_COMMAND,
+    type ElementNode,
+    FORMAT_ELEMENT_COMMAND,
     FORMAT_TEXT_COMMAND,
     type LexicalEditor,
     type LexicalNode,
     REDO_COMMAND,
+    type RangeSelection,
+    type TextNode,
     UNDO_COMMAND,
 } from 'lexical';
 import { type ReactNode, useCallback, useEffect, useState } from 'react';
@@ -109,6 +119,9 @@ const styles = stylex.create({
         width: '18px',
         height: '18px',
     },
+    copyButton: {
+        marginLeft: 'auto',
+    },
 });
 
 function $findTopLevelElement(node: LexicalNode) {
@@ -126,18 +139,51 @@ function $findTopLevelElement(node: LexicalNode) {
     return topLevelElement;
 }
 
+function $getSelectedNode(selection: RangeSelection): TextNode | ElementNode {
+    const anchor = selection.anchor;
+    const focus = selection.focus;
+    const anchorNode = selection.anchor.getNode();
+    const focusNode = selection.focus.getNode();
+    if (anchorNode === focusNode) {
+        return anchorNode;
+    }
+    const isBackward = selection.isBackward();
+    if (isBackward) {
+        return $isAtNodeEnd(focus) ? anchorNode : focusNode;
+    }
+    return $isAtNodeEnd(anchor) ? anchorNode : focusNode;
+}
+
+const clearFormat = (editor: LexicalEditor) => {
+    editor.update(() => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+            for (const node of selection.getNodes()) {
+                if ($isTextNode(node)) {
+                    node.setFormat(0);
+                }
+            }
+        }
+    });
+};
+
 export const ToolbarPlugin = () => {
     const [editor] = useLexicalComposerContext();
     const [toolbarState, setToolbarState] = useState({
         isBold: false,
         isItalic: false,
         isUnderline: false,
-        isStrikethrough: false,
         canUndo: false,
         canRedo: false,
         blockType: 'paragraph',
+        alignType: 'left',
+        isLowercase: false,
+        isUppercase: false,
+        isCapitalized: false,
+        isStrikethrough: false,
+        isSuperscript: false,
+        isSubscript: false,
     });
-    // console.log("🚀 ~ ToolbarPlugin ~ toolbarState:", toolbarState)
 
     const $handleUpdateBlockType = useCallback((selectedElement: LexicalNode) => {
         const type = $isHeadingNode(selectedElement)
@@ -146,11 +192,29 @@ export const ToolbarPlugin = () => {
               ? selectedElement.getListType()
               : selectedElement.getType();
 
-        console.log(type);
-        setToolbarState((prev) => ({
-            ...prev,
-            blockType: type,
-        }));
+        setToolbarState((prev) =>
+            produce(prev, (draft) => {
+                draft.blockType = type;
+            }),
+        );
+    }, []);
+
+    const $handleUpdateAlignType = useCallback((selection: RangeSelection) => {
+        const node = $getSelectedNode(selection);
+        let alignType = 'left';
+        if ($isElementNode(node)) {
+            alignType = node.getFormatType();
+        } else {
+            const parent = node.getParent();
+            if (parent && $isElementNode(parent)) {
+                alignType = parent.getFormatType() || 'left';
+            }
+        }
+        setToolbarState((prev) =>
+            produce(prev, (draft) => {
+                draft.alignType = alignType;
+            }),
+        );
     }, []);
 
     const $updateToolbar = useCallback(() => {
@@ -160,18 +224,26 @@ export const ToolbarPlugin = () => {
             const element = $findTopLevelElement(anchorNode);
 
             // Update text format
-            setToolbarState((prev) => ({
-                ...prev,
-                isBold: selection.hasFormat('bold'),
-                isItalic: selection.hasFormat('italic'),
-                isUnderline: selection.hasFormat('underline'),
-                isStrikethrough: selection.hasFormat('strikethrough'),
-            }));
+            setToolbarState((prev) =>
+                produce(prev, (draft) => {
+                    draft.isBold = selection.hasFormat('bold');
+                    draft.isItalic = selection.hasFormat('italic');
+                    draft.isUnderline = selection.hasFormat('underline');
+                    draft.isLowercase = selection.hasFormat('lowercase');
+                    draft.isUppercase = selection.hasFormat('uppercase');
+                    draft.isCapitalized = selection.hasFormat('capitalize');
+                    draft.isStrikethrough = selection.hasFormat('strikethrough');
+                    draft.isSuperscript = selection.hasFormat('superscript');
+                    draft.isSubscript = selection.hasFormat('subscript');
+                }),
+            );
 
             // block type
             $handleUpdateBlockType(element);
+            // align type
+            $handleUpdateAlignType(selection);
         }
-    }, [$handleUpdateBlockType]);
+    }, [$handleUpdateBlockType, $handleUpdateAlignType]);
 
     useEffect(() => {
         return mergeRegister(
@@ -210,14 +282,6 @@ export const ToolbarPlugin = () => {
                         canRedo: payload,
                     }));
                     return false;
-                },
-                COMMAND_PRIORITY_LOW,
-            ),
-            editor.registerCommand(
-                INSERT_CHECK_LIST_COMMAND,
-                () => {
-                    $insertList('check');
-                    return true;
                 },
                 COMMAND_PRIORITY_LOW,
             ),
@@ -296,9 +360,12 @@ export const ToolbarPlugin = () => {
             <button type="button" {...stylex.props(styles.toolBarButton)} title="Link">
                 <IconLink {...stylex.props(styles.toolBarIcon)} />
             </button>
+            <TextStyleDropdown editor={editor} />
+            <Divider />
+            <AlignDropdown editor={editor} alignType={toolbarState.alignType} />
             <button
                 type="button"
-                {...stylex.props(styles.toolBarButton)}
+                {...stylex.props(styles.toolBarButton, styles.copyButton)}
                 onClick={() => {
                     editor.dispatchCommand(COPY_COMMAND, null);
                 }}
@@ -306,9 +373,6 @@ export const ToolbarPlugin = () => {
             >
                 <IconCopy {...stylex.props(styles.toolBarIcon)} />
             </button>
-            <TextStyleDropdown />
-            <Divider />
-            <AlignDropdown />
         </div>
     );
 };
@@ -474,7 +538,7 @@ const FormatDropdown = ({ editor, blockType }: { editor: LexicalEditor; blockTyp
                 <DropdownItem
                     key={option.value}
                     onClick={() => format(option.value)}
-                    isActive={option.value === blockType}
+                    // isActive={option.value === blockType}
                 >
                     {option.icon}
                     {option.label}
@@ -484,34 +548,53 @@ const FormatDropdown = ({ editor, blockType }: { editor: LexicalEditor; blockTyp
     );
 };
 
-const AlignDropdown = () => {
-    const alignOptions = [
-        {
-            icon: <IconLetterCase {...stylex.props(styles.toolBarIcon)} />,
+const AlignDropdown = ({ editor, alignType }: { editor: LexicalEditor; alignType: string }) => {
+    const options = {
+        left: {
+            icon: <IconAlignLeft {...stylex.props(styles.toolBarIcon)} />,
             label: 'Left Align',
             value: 'left',
         },
-        {
-            icon: <IconLetterCase {...stylex.props(styles.toolBarIcon)} />,
+        center: {
+            icon: <IconAlignCenter {...stylex.props(styles.toolBarIcon)} />,
             label: 'Center Align',
             value: 'center',
         },
-        {
-            icon: <IconLetterCase {...stylex.props(styles.toolBarIcon)} />,
+        right: {
+            icon: <IconAlignRight {...stylex.props(styles.toolBarIcon)} />,
             label: 'Right Align',
             value: 'right',
         },
-        {
-            icon: <IconLetterCase {...stylex.props(styles.toolBarIcon)} />,
+        justify: {
+            icon: <IconAlignJustified {...stylex.props(styles.toolBarIcon)} />,
             label: 'Justify Align',
             value: 'justify',
         },
-    ];
+    };
+
+    const format = (value: string) => {
+        switch (value) {
+            case options.left.value:
+                editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left');
+                break;
+            case options.center.value:
+                editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center');
+                break;
+            case options.right.value:
+                editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right');
+                break;
+            case options.justify.value:
+                editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'justify');
+                break;
+        }
+    };
+
+    const currentOption = options[alignType as keyof typeof options] || options.left;
 
     return (
-        <Dropdown label="Align">
-            {alignOptions.map((option) => (
-                <DropdownItem key={option.value} onClick={() => console.log(option.value)}>
+        <Dropdown label={formatDropdownLabel(currentOption)} triggerWidth={160}>
+            {Object.values(options).map((option) => (
+                <DropdownItem key={option.value} onClick={() => format(option.value)}>
                     {option.icon}
                     {option.label}
                 </DropdownItem>
@@ -520,49 +603,75 @@ const AlignDropdown = () => {
     );
 };
 
-const TextStyleDropdown = () => {
-    const textStyleOptions = [
-        {
+const TextStyleDropdown = ({ editor }: { editor: LexicalEditor }) => {
+    const options = {
+        lowercase: {
             icon: <IconLetterCaseLower {...stylex.props(styles.toolBarIcon)} />,
             label: 'Lowercase',
             value: 'lowercase',
         },
-        {
+        uppercase: {
             icon: <IconLetterCaseUpper {...stylex.props(styles.toolBarIcon)} />,
             label: 'Uppercase',
             value: 'uppercase',
         },
-        {
+        capitalize: {
             icon: <IconAbc {...stylex.props(styles.toolBarIcon)} />,
             label: 'Capitalize',
             value: 'capitalize',
         },
-        {
+        strikethrough: {
             icon: <IconStrikethrough {...stylex.props(styles.toolBarIcon)} />,
             label: 'Strikethrough',
             value: 'strikethrough',
         },
-        {
+        superscript: {
             icon: <IconSuperscript {...stylex.props(styles.toolBarIcon)} />,
             label: 'Superscript',
             value: 'superscript',
         },
-        {
+        subscript: {
             icon: <IconSubscript {...stylex.props(styles.toolBarIcon)} />,
             label: 'Subscript',
             value: 'subscript',
         },
-        {
+        clearFormatting: {
             icon: <IconTrash {...stylex.props(styles.toolBarIcon)} />,
             label: 'Clear formatting',
             value: 'clear-formatting',
         },
-    ];
+    };
+
+    const format = (value: string) => {
+        switch (value) {
+            case options.lowercase.value:
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'lowercase');
+                break;
+            case options.uppercase.value:
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'uppercase');
+                break;
+            case options.capitalize.value:
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'capitalize');
+                break;
+            case options.strikethrough.value:
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
+                break;
+            case options.superscript.value:
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
+                break;
+            case options.subscript.value:
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
+                break;
+            case options.clearFormatting.value:
+                clearFormat(editor);
+                break;
+        }
+    };
 
     return (
         <Dropdown label="Aa">
-            {textStyleOptions.map((option) => (
-                <DropdownItem key={option.value} onClick={() => console.log(option.value)}>
+            {Object.values(options).map((option) => (
+                <DropdownItem key={option.value} onClick={() => format(option.value)}>
                     {option.icon}
                     {option.label}
                 </DropdownItem>

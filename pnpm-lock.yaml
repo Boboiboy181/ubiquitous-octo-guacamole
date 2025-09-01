@@ -50,6 +50,9 @@ importers:
       '@tanstack/react-router-devtools':
         specifier: ^1.131.27
         version: 1.131.27(@tanstack/react-router@1.131.27(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@tanstack/router-core@1.131.27)(csstype@3.1.3)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9)(tiny-invariant@1.3.3)
+      immer:
+        specifier: ^10.1.1
+        version: 10.1.1
       lexical:
         specifier: ^0.34.0
         version: 0.34.0
@@ -1488,6 +1491,9 @@ packages:
 
   html-escaper@2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
+
+  immer@10.1.1:
+    resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
 
   import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
@@ -3539,6 +3545,8 @@ snapshots:
   html-entities@2.6.0: {}
 
   html-escaper@2.0.2: {}
+
+  immer@10.1.1: {}
 
   import-fresh@3.3.1:
     dependencies:

@@ -5,6 +5,7 @@ import { LinkNode } from '@lexical/link';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { $convertFromMarkdownString, TRANSFORMERS } from '@lexical/markdown';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
+import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
@@ -13,10 +14,10 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { TabIndentationPlugin } from '@lexical/react/LexicalTabIndentationPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { ToolbarPlugin } from './plugins/toolbar.plugin';
 import { styles } from './styles.ts';
-import { TabIndentationPlugin } from '@lexical/react/LexicalTabIndentationPlugin';
 
 const theme = {
     paragraph: stylex.props(styles.paragraph).className,
@@ -24,6 +25,13 @@ const theme = {
         bold: stylex.props(styles.textBold).className,
         italic: stylex.props(styles.textItalic).className,
         underline: stylex.props(styles.textUnderline).className,
+        superscript: stylex.props(styles.superscript).className,
+        subscript: stylex.props(styles.subscript).className,
+        underlineStrikethrough: stylex.props(styles.underlineStrikethrough).className,
+        strikethrough: stylex.props(styles.strikethrough).className,
+        uppercase: stylex.props(styles.uppercase).className,
+        lowercase: stylex.props(styles.lowercase).className,
+        code: stylex.props(styles.code).className,
     },
     heading: {
         h1: stylex.props(styles.h1).className,
@@ -34,19 +42,20 @@ const theme = {
         h6: stylex.props(styles.h6).className,
     },
     list: {
-        checklist: 'PlaygroundEditorTheme__checklist',
-        listitem: stylex.props(styles.listItem).className!,
-        listitemChecked: 'PlaygroundEditorTheme__listItemChecked',
-        listitemUnchecked: 'PlaygroundEditorTheme__listItemUnchecked',
+        listitem: stylex.props(styles.listItem).className,
+        // listitemChecked: 'PlaygroundEditorTheme__listItemChecked',
+        // listitemUnchecked: 'PlaygroundEditorTheme__listItemUnchecked',
+        listitemChecked: stylex.props(styles.checklistItemBase, styles.listItemChecked).className,
+        listitemUnchecked: stylex.props(styles.checklistItemBase, styles.listItemUnchecked).className,
         nested: {
-            listitem: stylex.props(styles.nestedListItem).className!,
+            listitem: stylex.props(styles.nestedListItem).className,
         },
         olDepth: [
-            stylex.props(styles.ol1).className!,
-            stylex.props(styles.ol2).className!,
-            stylex.props(styles.ol3).className!,
-            stylex.props(styles.ol4).className!,
-            stylex.props(styles.ol5).className!,
+            stylex.props(styles.ol1).className ?? '',
+            stylex.props(styles.ol2).className ?? '',
+            stylex.props(styles.ol3).className ?? '',
+            stylex.props(styles.ol4).className ?? '',
+            stylex.props(styles.ol5).className ?? '',
         ],
         ul: stylex.props(styles.ul).className,
     },
@@ -93,6 +102,7 @@ export const LexicalEditor = () => {
                     <ListPlugin />
                     <HistoryPlugin />
                     <AutoFocusPlugin />
+                    <CheckListPlugin />
                     <TabIndentationPlugin maxIndent={7} />
                     <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
                 </div>

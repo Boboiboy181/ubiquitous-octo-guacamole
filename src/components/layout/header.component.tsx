@@ -23,7 +23,7 @@ const styles = stylex.create({
         textDecoration: 'none',
         color: '#000',
     },
-     activeLink: {
+    activeLink: {
         color: '#087EA4', // Example: Change color for active state
         fontWeight: 'bold', // Example: Make it bold
         textDecoration: 'underline', // Example: Add underline
@@ -51,13 +51,22 @@ export const Header = () => {
                     Home
                 </Link>{' '}
                 <Link
-                    to="/about"
+                    to="/lexical"
                     {...stylex.props(styles.link)}
                     activeProps={{
                         className: stylex.props(styles.activeLink).className,
                     }}
                 >
-                    About
+                    Lexical
+                </Link>
+                <Link
+                    to="/dnd"
+                    {...stylex.props(styles.link)}
+                    activeProps={{
+                        className: stylex.props(styles.activeLink).className,
+                    }}
+                >
+                    Drag and Drop
                 </Link>
             </div>
         </header>

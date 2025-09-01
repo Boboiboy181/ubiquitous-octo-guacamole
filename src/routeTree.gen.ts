@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AboutRouteImport } from './routes/about'
+import { Route as LexicalRouteImport } from './routes/lexical'
+import { Route as DndRouteImport } from './routes/dnd'
 import { Route as IndexRouteImport } from './routes/index'
 
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+const LexicalRoute = LexicalRouteImport.update({
+  id: '/lexical',
+  path: '/lexical',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DndRoute = DndRouteImport.update({
+  id: '/dnd',
+  path: '/dnd',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -25,37 +31,48 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/dnd': typeof DndRoute
+  '/lexical': typeof LexicalRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/dnd': typeof DndRoute
+  '/lexical': typeof LexicalRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/dnd': typeof DndRoute
+  '/lexical': typeof LexicalRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths: '/' | '/dnd' | '/lexical'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+  to: '/' | '/dnd' | '/lexical'
+  id: '__root__' | '/' | '/dnd' | '/lexical'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
+  DndRoute: typeof DndRoute
+  LexicalRoute: typeof LexicalRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
+    '/lexical': {
+      id: '/lexical'
+      path: '/lexical'
+      fullPath: '/lexical'
+      preLoaderRoute: typeof LexicalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dnd': {
+      id: '/dnd'
+      path: '/dnd'
+      fullPath: '/dnd'
+      preLoaderRoute: typeof DndRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -70,7 +87,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
+  DndRoute: DndRoute,
+  LexicalRoute: LexicalRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

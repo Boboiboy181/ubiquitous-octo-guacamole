@@ -10,14 +10,27 @@
         "preview": "rsbuild preview"
     },
     "dependencies": {
+        "@base-ui-components/react": "1.0.0-beta.2",
+        "@lexical/clipboard": "^0.34.0",
+        "@lexical/code": "^0.34.0",
+        "@lexical/link": "^0.34.0",
+        "@lexical/list": "^0.34.0",
+        "@lexical/markdown": "^0.34.0",
+        "@lexical/react": "^0.34.0",
+        "@lexical/rich-text": "^0.34.0",
+        "@lexical/selection": "^0.34.0",
+        "@lexical/utils": "^0.34.0",
         "@stylexjs/stylex": "^0.15.3",
+        "@tabler/icons-react": "^3.34.1",
         "@tanstack/react-router": "^1.131.27",
         "@tanstack/react-router-devtools": "^1.131.27",
+        "lexical": "^0.34.0",
         "react": "^19.1.1",
         "react-dom": "^19.1.1"
     },
     "devDependencies": {
         "@babel/preset-react": "^7.27.1",
+        "@babel/preset-typescript": "^7.27.1",
         "@prettier/plugin-oxc": "^0.0.4",
         "@rsbuild/core": "^1.4.13",
         "@rsbuild/plugin-react": "^1.3.4",

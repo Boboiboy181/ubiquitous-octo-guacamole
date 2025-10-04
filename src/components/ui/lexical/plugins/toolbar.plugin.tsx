@@ -532,8 +532,10 @@ const FormatDropdown = ({ editor, blockType }: { editor: LexicalEditor; blockTyp
         }
     };
 
+     const currentOption = options[blockType as keyof typeof options] || options.paragraph;
+
     return (
-        <Dropdown label={formatDropdownLabel(options[blockType as keyof typeof options])} triggerWidth={168}>
+        <Dropdown label={formatDropdownLabel(currentOption)} triggerWidth={168}>
             {Object.values(options).map((option) => (
                 <DropdownItem
                     key={option.value}

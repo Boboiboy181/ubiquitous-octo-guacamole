@@ -1,0 +1,6 @@
+
+onlyBuiltDependencies:
+  - leveldown
+  - classic-level
+  - core-js
+  - esbuild

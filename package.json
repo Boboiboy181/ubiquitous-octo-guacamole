@@ -6,8 +6,11 @@
     "scripts": {
         "build": "rsbuild build",
         "dev": "rsbuild dev",
+        "dev:local": "cross-env NODE_ENV=development concurrently \"pnpm:server:ws\" \"pnpm:server:webrtc\" \"pnpm:dev\"",
         "format": "prettier --write .",
-        "preview": "rsbuild preview"
+        "preview": "rsbuild preview",
+        "server:ws": "cross-env HOST=localhost PORT=1234 npx y-websocket",
+        "server:webrtc": "cross-env HOST=localhost PORT=1235 npx y-webrtc"
     },
     "dependencies": {
         "@base-ui-components/react": "1.0.0-beta.2",
@@ -20,14 +23,21 @@
         "@lexical/rich-text": "^0.34.0",
         "@lexical/selection": "^0.34.0",
         "@lexical/utils": "^0.34.0",
+        "@lexical/yjs": "^0.34.0",
         "@stylexjs/stylex": "^0.15.3",
         "@tabler/icons-react": "^3.34.1",
         "@tanstack/react-router": "^1.131.27",
         "@tanstack/react-router-devtools": "^1.131.27",
+        "@y/websocket-server": "^0.1.1",
         "immer": "^10.1.1",
         "lexical": "^0.34.0",
         "react": "^19.1.1",
-        "react-dom": "^19.1.1"
+        "react-dom": "^19.1.1",
+        "y-indexeddb": "^9.0.12",
+        "y-leveldb": "^0.2.0",
+        "y-webrtc": "^10.3.0",
+        "y-websocket": "^3.0.0",
+        "yjs": "^13.6.27"
     },
     "devDependencies": {
         "@babel/preset-react": "^7.27.1",
@@ -42,6 +52,8 @@
         "@types/react": "^19.1.9",
         "@types/react-dom": "^19.1.7",
         "autoprefixer": "^10.4.21",
+        "concurrently": "^9.2.1",
+        "cross-env": "^10.0.0",
         "postcss": "^8.5.6",
         "prettier": "^3.6.2",
         "typescript": "^5.9.2",

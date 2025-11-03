@@ -9,18 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ThreejsRouteImport } from './routes/threejs'
 import { Route as LexicalRouteImport } from './routes/lexical'
-import { Route as DndRouteImport } from './routes/dnd'
 import { Route as IndexRouteImport } from './routes/index'
 
+const ThreejsRoute = ThreejsRouteImport.update({
+  id: '/threejs',
+  path: '/threejs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LexicalRoute = LexicalRouteImport.update({
   id: '/lexical',
   path: '/lexical',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DndRoute = DndRouteImport.update({
-  id: '/dnd',
-  path: '/dnd',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -31,48 +31,48 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dnd': typeof DndRoute
   '/lexical': typeof LexicalRoute
+  '/threejs': typeof ThreejsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dnd': typeof DndRoute
   '/lexical': typeof LexicalRoute
+  '/threejs': typeof ThreejsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dnd': typeof DndRoute
   '/lexical': typeof LexicalRoute
+  '/threejs': typeof ThreejsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dnd' | '/lexical'
+  fullPaths: '/' | '/lexical' | '/threejs'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dnd' | '/lexical'
-  id: '__root__' | '/' | '/dnd' | '/lexical'
+  to: '/' | '/lexical' | '/threejs'
+  id: '__root__' | '/' | '/lexical' | '/threejs'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DndRoute: typeof DndRoute
   LexicalRoute: typeof LexicalRoute
+  ThreejsRoute: typeof ThreejsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/threejs': {
+      id: '/threejs'
+      path: '/threejs'
+      fullPath: '/threejs'
+      preLoaderRoute: typeof ThreejsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lexical': {
       id: '/lexical'
       path: '/lexical'
       fullPath: '/lexical'
       preLoaderRoute: typeof LexicalRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dnd': {
-      id: '/dnd'
-      path: '/dnd'
-      fullPath: '/dnd'
-      preLoaderRoute: typeof DndRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -87,8 +87,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DndRoute: DndRoute,
   LexicalRoute: LexicalRoute,
+  ThreejsRoute: ThreejsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -60,13 +60,13 @@ export const Header = () => {
                     Lexical
                 </Link>
                 <Link
-                    to="/dnd"
+                    to="/threejs"
                     {...stylex.props(styles.link)}
                     activeProps={{
                         className: stylex.props(styles.activeLink).className,
                     }}
                 >
-                    Drag and Drop
+                    Three.js
                 </Link>
             </div>
         </header>

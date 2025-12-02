@@ -29,6 +29,7 @@
         "@react-three/rapier": "^2.1.0",
         "@stylexjs/stylex": "^0.15.3",
         "@tabler/icons-react": "^3.34.1",
+        "@tanstack/react-ranger": "^0.0.4",
         "@tanstack/react-router": "^1.131.27",
         "@tanstack/react-router-devtools": "^1.131.27",
         "@types/three": "^0.180.0",
@@ -62,6 +63,6 @@
         "postcss": "^8.5.6",
         "prettier": "^3.6.2",
         "typescript": "^5.9.2",
-        "unplugin-stylex": "^0.5.4"
+        "unplugin-stylex": "^0.5.5"
     }
 }

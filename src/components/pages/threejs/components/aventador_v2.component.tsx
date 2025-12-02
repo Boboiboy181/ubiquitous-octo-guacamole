@@ -1,33 +1,30 @@
 import {
-    OrbitControls,
-    useGLTF,
-    Environment,
-    ContactShadows,
-    PerspectiveCamera,
-    useAnimations,
-    Text,
-    Float,
-    Sparkles,
-    Lightformer,
     AccumulativeShadows,
+    Environment,
+    Float,
+    Lightformer,
+    OrbitControls,
     RandomizedLight,
+    Sparkles,
     Stats,
+    Text,
+    useGLTF,
 } from '@react-three/drei';
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
 // Custom hook for smooth animations
-function useSmoothedControls() {
-    const [target, setTarget] = useState([0, 0, 0]);
-    const [smoothTarget] = useState(() => new THREE.Vector3());
-
-    useFrame((state, delta) => {
-        smoothTarget.lerp(new THREE.Vector3(...target), delta * 2);
-    });
-
-    return { target: smoothTarget, setTarget };
-}
+// function useSmoothedControls() {
+//     const [target, setTarget] = useState([0, 0, 0]);
+//     const [smoothTarget] = useState(() => new THREE.Vector3());
+//
+//     useFrame((state, delta) => {
+//         smoothTarget.lerp(new THREE.Vector3(...target), delta * 2);
+//     });
+//
+//     return { target: smoothTarget, setTarget };
+// }
 
 // Animated floating particles around the car
 function FloatingParticles() {
@@ -40,7 +37,7 @@ function FloatingParticles() {
         }
     });
 
-    return <Sparkles ref={meshRef} count={50} scale={[20, 5, 20]} size={3} speed={0.3} opacity={0.6} color="#ffd700" />;
+    return <Sparkles count={50} scale={[20, 5, 20]} size={3} speed={0.3} opacity={0.6} color="#ffd700" />;
 }
 
 // Interactive spotlight that follows mouse

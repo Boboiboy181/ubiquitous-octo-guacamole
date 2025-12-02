@@ -1,4 +1,4 @@
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { useRef } from 'react';
 import { OrbitControls } from '@react-three/drei';
 import type { Group } from 'three';
@@ -7,7 +7,7 @@ import { Physics, RigidBody } from '@react-three/rapier';
 export function Scene() {
     const groupRef = useRef<Group>(null);
 
-    useFrame((state, delta) => {
+    useFrame((_state, delta) => {
         // Animation or frame updates can be handled here
         if (groupRef.current) {
             groupRef.current.rotation.y += delta;

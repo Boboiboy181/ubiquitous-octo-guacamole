@@ -68,6 +68,15 @@ export const Header = () => {
                 >
                     Three.js
                 </Link>
+                <Link
+                    to="/cropper"
+                    {...stylex.props(styles.link)}
+                    activeProps={{
+                        className: stylex.props(styles.activeLink).className,
+                    }}
+                >
+                    Cropper
+                </Link>
             </div>
         </header>
     );

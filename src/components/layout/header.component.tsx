@@ -77,6 +77,15 @@ export const Header = () => {
                 >
                     Cropper
                 </Link>
+                <Link
+                    to="/hooks"
+                    {...stylex.props(styles.link)}
+                    activeProps={{
+                        className: stylex.props(styles.activeLink).className,
+                    }}
+                >
+                    Hooks
+                </Link>
             </div>
         </header>
     );

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ThreejsRouteImport } from './routes/threejs'
 import { Route as LexicalRouteImport } from './routes/lexical'
+import { Route as HooksRouteImport } from './routes/hooks'
 import { Route as CropperRouteImport } from './routes/cropper'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -22,6 +23,11 @@ const ThreejsRoute = ThreejsRouteImport.update({
 const LexicalRoute = LexicalRouteImport.update({
   id: '/lexical',
   path: '/lexical',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HooksRoute = HooksRouteImport.update({
+  id: '/hooks',
+  path: '/hooks',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CropperRoute = CropperRouteImport.update({
@@ -38,12 +44,14 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cropper': typeof CropperRoute
+  '/hooks': typeof HooksRoute
   '/lexical': typeof LexicalRoute
   '/threejs': typeof ThreejsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cropper': typeof CropperRoute
+  '/hooks': typeof HooksRoute
   '/lexical': typeof LexicalRoute
   '/threejs': typeof ThreejsRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/cropper': typeof CropperRoute
+  '/hooks': typeof HooksRoute
   '/lexical': typeof LexicalRoute
   '/threejs': typeof ThreejsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/cropper' | '/lexical' | '/threejs'
+  fullPaths: '/' | '/cropper' | '/hooks' | '/lexical' | '/threejs'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cropper' | '/lexical' | '/threejs'
-  id: '__root__' | '/' | '/cropper' | '/lexical' | '/threejs'
+  to: '/' | '/cropper' | '/hooks' | '/lexical' | '/threejs'
+  id: '__root__' | '/' | '/cropper' | '/hooks' | '/lexical' | '/threejs'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CropperRoute: typeof CropperRoute
+  HooksRoute: typeof HooksRoute
   LexicalRoute: typeof LexicalRoute
   ThreejsRoute: typeof ThreejsRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/lexical'
       fullPath: '/lexical'
       preLoaderRoute: typeof LexicalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hooks': {
+      id: '/hooks'
+      path: '/hooks'
+      fullPath: '/hooks'
+      preLoaderRoute: typeof HooksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cropper': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CropperRoute: CropperRoute,
+  HooksRoute: HooksRoute,
   LexicalRoute: LexicalRoute,
   ThreejsRoute: ThreejsRoute,
 }
